@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# A script is helpful to Clone and Pull from master branch in GitHub and BitBucket
+
+##### Constants
+
+# Title of the script.
+TITLE="UviShellScript"
+
+# Log type enumeration.
+LOG_TYPE=(Info Verbose Warnings Debug Error)
+
+# Branch Checkout Path
+PATH="/XXX/XXXX/XXXXX/XXXXXX/";
+
+# GitHub path with Username and Password.
+# If Password contains "@"" character. Please use "%40" instead of "@".
+GIT_PATH="https://Username:Password@bitbucket.org/Username/";
+
+# GitHub path with Username and Password.
+# Array is helpful to checkout list of repos under user.
+GIT_REPO_ARRAY=(Repo1, Repo2);
+
+##### Util Function
+
+# Print log in with colored output
+print_log()
+{
+
+	option="${1}" 
+	message="${2}" 
+	shift; shift;
+	case ${option} in 
+	   	Info)
+	    	echo -e "\033[32m$message\033[0m "
+	    	;; 
+	   	Verbose) 
+	      	echo -e "\033[34m$message\033[0m "
+	      	;; 
+	   	Warnings) 
+	      	echo -e "\033[33m$message\033[0m "
+	      	;; 
+	    Debug) 
+	      	echo -e "\033[35m$message\033[0m "
+	      	;; 
+	    Error) 
+	      	echo -e "\033[31m$message\033[0m "
+	      	;; 
+	   *)  
+	     echo -e "\033[34m$message\033[0m "
+	      ;; 
+	esac 
+}
+
+# Start the Process.
+print_log Info "Welcome to $TITLE\n" 
+
+# Navigate to check out path
+print_log Info "Navigate to the checkout Path: $PATH"
+cd $PATH;
+
+total=${#GIT_REPO_ARRAY[*]}
+for (( i=0; i<=$(( $total -1 )); i++ ))
+do
+	print_log Verbose "Clone or Pull from Git URL".$GIT_PATH${GIT_REPO_ARRAY[$i]}".git";
+	if [ -d ${GIT_REPO_ARRAY[$i]} ]; then
+		# Control will enter here if $DIRECTORY exists.
+		cd ${GIT_REPO_ARRAY[$i]}
+		git pull $GIT_PATH${GIT_REPO_ARRAY[$i]}".git";
+	else
+		git clone -b master $GIT_PATH${GIT_REPO_ARRAY[$i]}".git";
+		
+	fi
+done
+
+
+print_log Info "\nCompleted clone work!!\nHave a good day!!";
